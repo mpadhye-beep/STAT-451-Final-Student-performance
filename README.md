@@ -2,9 +2,13 @@
 
 ## Team Members (Name - Github Username): 
 Shelby Ames - ShelbyAmes
+
 Andrew Xiong - AndrewXiongGitHub
+
 Annie Lu - ...
+
 Ubaidillah Bin Mohammad Razali - ubaaiieeoo
+
 Minu Padhye - mpadhye-beep
 
 ## Abstract:
