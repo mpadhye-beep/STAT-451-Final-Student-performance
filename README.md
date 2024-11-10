@@ -5,7 +5,7 @@ Shelby Ames - ShelbyAmes
 
 Andrew Xiong - AndrewXiongGitHub
 
-Annie Lu - ...
+Annie Lu - lu-annie
 
 Ubaidillah Bin Mohammad Razali - ubaaiieeoo
 
