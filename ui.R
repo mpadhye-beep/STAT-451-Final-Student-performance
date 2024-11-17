@@ -34,6 +34,7 @@ ui <- fluidPage(
         label = "Select Statistic",
         choices = c("Min.", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max.")
       )
+  
     ),
     
     # Main panel for displaying outputs
@@ -43,7 +44,8 @@ ui <- fluidPage(
       verbatimTextOutput(outputId = "table"),
       plotOutput(outputId = "plot"),
       plotOutput(outputId = "scatterPlot"),
-      textOutput(outputId = "statistic") # 
+      textOutput(outputId = "statistic"), 
+      plotOutput(outputId = "histogramPlot")
       
     )
   )
