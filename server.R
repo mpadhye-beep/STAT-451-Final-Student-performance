@@ -10,6 +10,7 @@
 library(shiny)
 library(tidyverse)
 library(skimr)
+library(corrplot)
 
 student_performance_factors = read.csv("StudentPerformanceFactors.csv")
 
