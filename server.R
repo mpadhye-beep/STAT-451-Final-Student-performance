@@ -47,7 +47,32 @@ server <- function(input, output, session) {
       theme_minimal()
   })
   
- 
+  output$histogramPlot <- renderPlot({
+    explanatory_var <- student_performance_factors[[input$explanatory]]
+    is_categorical <- is.factor(explanatory_var) || is.character(explanatory_var)
+    
+    if (is_categorical) {
+      ggplot(student_performance_factors, aes(x = Exam_Score, fill = explanatory_var)) +
+        geom_histogram(binwidth = 5, position = "dodge", alpha = 0.7) +
+        labs(
+          x = "Exam Score",
+          y = "Count",
+          title = paste("Distribution of Exam Scores by", input$explanatory),
+          fill = input$explanatory
+        ) +
+        theme_minimal()
+    } else {
+      ggplot(student_performance_factors, aes(x = Exam_Score)) +
+        geom_histogram(aes(fill = ..count..), binwidth = 5, alpha = 0.7, color = "black") +
+        labs(
+          x = "Exam Score",
+          y = "Count",
+          title = paste("Distribution of Exam Scores"),
+          fill = "Count"
+        ) +
+        theme_minimal()
+    }
+  }) 
   
   
 }
