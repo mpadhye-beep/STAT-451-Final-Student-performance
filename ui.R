@@ -7,15 +7,45 @@
 #    https://shiny.posit.co/
 #
 
+student_performance_factors = read.csv("StudentPerformanceFactors.csv")
+
 
 library(shiny)
+library(bslib)
 
-# Define UI for application that draws a histogram
-fluidPage(
-  selectInput("explanatory", label = "Pick explanatory", choices =colnames(student_performance_factors)) ,
-  verbatimTextOutput("summary"),
-  verbatimTextOutput("table"),
+
+# Define UI
+ui <- fluidPage(
+  # App title
+  titlePanel("Student Score Analysis"),
   
-  plotOutput("plot"),
-  
+  # Sidebar layout with input and output definitions
+  sidebarLayout(
+    # Sidebar panel for inputs
+    sidebarPanel(
+      # Input: Dropdown for explanatory variable
+      selectInput(
+        inputId = "explanatory",
+        label = "Pick explanatory",
+        choices = colnames(student_performance_factors)
+      ),
+      selectInput(
+        inputId = "statistic",
+        label = "Select Statistic",
+        choices = c("Min.", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max.")
+      )
+    ),
+    
+    # Main panel for displaying outputs
+    mainPanel(
+      # Outputs
+      verbatimTextOutput(outputId = "summary"),
+      verbatimTextOutput(outputId = "table"),
+      plotOutput(outputId = "plot"),
+      plotOutput(outputId = "scatterPlot"),
+      textOutput(outputId = "statistic") # 
+      
+    )
+  )
 )
+
