@@ -73,7 +73,22 @@ server <- function(input, output, session) {
         theme_minimal()
     }
   }) 
+
+  filtered_data <- reactive({
+    student_performance_factors %>%
+      select(where(is.numeric))
+  })
   
-  
+  output$correlationHeatmap <- renderPlot({
+    cor_matrix <- cor(filtered_data(), use = "complete.obs")
+    
+    corrplot(cor_matrix, method = "circle", type = "upper", order = "hclust", 
+             title = "Correlation Heatmap of Numerical Variables", 
+             tl.cex = 0.8, number.cex = 0.7,
+             addCoef.col = "black",
+             insig = "blank", 
+             p.mat = cor.mtest(filtered_data(), conf.level = 0.95)$p,
+             mar = c(5, 5, 3, 5))
+  })
 }
 
