@@ -74,6 +74,29 @@ server <- function(input, output, session) {
     }
   }) 
 
+  output$anovaResult <- renderPrint({
+    if (is.factor(student_performance_factors[[input$explanatory]]) || 
+        is.character(student_performance_factors[[input$explanatory]])) {
+      anova_result <- aov(Exam_Score ~ get(input$explanatory), data = student_performance_factors)
+      summary(anova_result)
+    } else {
+      "ANOVA can only be performed on categorical variables."
+    }
+  })
+  
+  output$anovaPlot <- renderPlot({
+    if (is.factor(student_performance_factors[[input$explanatory]]) || 
+        is.character(student_performance_factors[[input$explanatory]])) {
+      ggplot(student_performance_factors, aes(x = get(input$explanatory), y = Exam_Score)) +
+        geom_boxplot(fill = "skyblue", alpha = 0.7) +
+        labs(title = paste("Boxplot of Exam Scores by", input$explanatory),
+             x = input$explanatory, y = "Exam Score") +
+        theme_minimal()
+    } else {
+      ggplot() + theme_void()
+    }
+  })
+
   filtered_data <- reactive({
     student_performance_factors %>%
       select(where(is.numeric))
