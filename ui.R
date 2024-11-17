@@ -46,7 +46,7 @@ ui <- fluidPage(
       plotOutput(outputId = "scatterPlot"),
       textOutput(outputId = "statistic"), 
       plotOutput(outputId = "histogramPlot")
-      
+      plotOutput(outputId = "correlationHeatmap")
     )
   )
 )
