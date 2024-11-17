@@ -11,6 +11,8 @@ library(shiny)
 library(tidyverse)
 library(skimr)
 
+student_performance_factors = read.csv("StudentPerformanceFactors.csv")
+
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
   output$summary <- renderPrint({
@@ -32,5 +34,21 @@ server <- function(input, output, session) {
       theme(axis.ticks.y = element_blank(),
             axis.text.y=element_blank())
   })
-
+  
+  output$scatterPlot <- renderPlot({
+    ggplot(student_performance_factors, aes(x = Exam_Score, y = get(input$explanatory), color = get(input$explanatory))) +
+      geom_point(alpha = 0.7, size = 3) +
+      labs(
+        x = "Exam Score",
+        #y = get(input$explanatory),
+        color = input$explanatory,
+        title = paste0("Study Hours vs Exam Score (Colored by ", input$explanatory, ")")
+      ) +
+      theme_minimal()
+  })
+  
+ 
+  
+  
 }
+
