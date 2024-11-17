@@ -45,7 +45,9 @@ ui <- fluidPage(
       plotOutput(outputId = "plot"),
       plotOutput(outputId = "scatterPlot"),
       textOutput(outputId = "statistic"), 
-      plotOutput(outputId = "histogramPlot")
+      plotOutput(outputId = "histogramPlot"),
+      verbatimTextOutput(outputId = "anovaResult"),
+      plotOutput(outputId = "anovaPlot"),
       plotOutput(outputId = "correlationHeatmap")
     )
   )
