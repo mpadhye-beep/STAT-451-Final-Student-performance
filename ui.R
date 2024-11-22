@@ -38,18 +38,34 @@ ui <- fluidPage(
     ),
     
     # Main panel for displaying outputs
-    mainPanel(
+    #mainPanel(
       # Outputs
-      verbatimTextOutput(outputId = "summary"),
-      verbatimTextOutput(outputId = "table"),
-      plotOutput(outputId = "plot"),
-      plotOutput(outputId = "scatterPlot"),
-      textOutput(outputId = "statistic"), 
-      plotOutput(outputId = "histogramPlot"),
-      verbatimTextOutput(outputId = "anovaResult"),
-      plotOutput(outputId = "anovaPlot"),
-      plotOutput(outputId = "correlationHeatmap")
+      #verbatimTextOutput(outputId = "summary"),
+      #verbatimTextOutput(outputId = "table"),
+      #plotOutput(outputId = "plot"),
+      #plotOutput(outputId = "scatterPlot"),
+      #textOutput(outputId = "statistic"), 
+      #plotOutput(outputId = "histogramPlot"),
+      #verbatimTextOutput(outputId = "anovaResult"),
+      #plotOutput(outputId = "anovaPlot"),
+      #plotOutput(outputId = "correlationHeatmap")
+    #)
+
+    # Potential alternative mainPanel using tabPanels (Maybe lessens overwhelming factor on users?: 
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Summary", verbatimTextOutput(outputId = "summary")),
+        tabPanel("Statistics Table", verbatimTextOutput(outputId = "table")),
+        tabPanel("Box Plot", plotOutput(outputId = "plot")),
+        tabPanel("Scatter Plot", plotOutput(outputId = "scatterPlot")),
+        tabPanel("Histogram", plotOutput(outputId = "histogramPlot")),
+        tabPanel("ANOVA Results", 
+                 verbatimTextOutput(outputId = "anovaResult"),
+                 plotOutput(outputId = "anovaPlot")),
+        tabPanel("Correlation Heatmap", plotOutput(outputId = "correlationHeatmap"))
+      )
     )
+    #
   )
 )
 
