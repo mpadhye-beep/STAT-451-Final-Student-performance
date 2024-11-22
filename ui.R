@@ -31,7 +31,7 @@ ui <- fluidPage(
       ),
       selectInput(
         inputId = "statistic",
-        label = "Select Statistic",
+        label = "Select Statistic (Red Dotted Line)",
         choices = c("Min.", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max.")
       )
   
