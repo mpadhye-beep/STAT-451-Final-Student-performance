@@ -16,6 +16,17 @@ student_performance_factors = read.csv("StudentPerformanceFactors.csv")
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
+
+  calculate_statistic <- function(variable) {
+    switch(input$statistic,
+           "Min." = min(variable, na.rm = TRUE),
+           "1st Qu." = quantile(variable, 0.25, na.rm = TRUE),
+           "Median" = median(variable, na.rm = TRUE),
+           "Mean" = mean(variable, na.rm = TRUE),
+           "3rd Qu." = quantile(variable, 0.75, na.rm = TRUE),
+           "Max." = max(variable, na.rm = TRUE))
+  }
+  
   output$summary <- renderPrint({
     dataset <- get(input$explanatory, student_performance_factors)
     summary(dataset)
@@ -26,54 +37,60 @@ server <- function(input, output, session) {
     skim(x)
   })
   
-  output$plot <- renderPlot({
-    ggplot(student_performance_factors, aes(x=Exam_Score, fill = get(input$explanatory)))+
-      geom_boxplot()+
+output$plot <- renderPlot({
+    selected_stat <- calculate_statistic(student_performance_factors$Exam_Score)
+    ggplot(student_performance_factors, aes(x = Exam_Score, fill = get(input$explanatory))) +
+      geom_boxplot() +
+      geom_vline(xintercept = selected_stat, color = "red", linetype = "dashed", size = 1) +
       labs(x = "Exam Score",
-           title = paste0(input$explanatory, " vs. Exam_Score"),
-           fill = input$explanatory)+
+           title = paste0(input$explanatory, " vs. Exam_Score (", input$statistic, ": ", round(selected_stat, 2), ")"),
+           fill = input$explanatory) +
       theme(axis.ticks.y = element_blank(),
-            axis.text.y=element_blank())
+            axis.text.y = element_blank())
   })
   
   output$scatterPlot <- renderPlot({
+    selected_stat <- calculate_statistic(student_performance_factors$Exam_Score)
     ggplot(student_performance_factors, aes(x = Exam_Score, y = get(input$explanatory), color = get(input$explanatory))) +
       geom_point(alpha = 0.7, size = 3) +
+      geom_vline(xintercept = selected_stat, color = "red", linetype = "dashed", size = 1) +
       labs(
         x = "Exam Score",
-        #y = get(input$explanatory),
         color = input$explanatory,
-        title = paste0("Study Hours vs Exam Score (Colored by ", input$explanatory, ")")
+        title = paste0("Study Hours vs Exam Score (", input$statistic, ": ", round(selected_stat, 2), ")")
       ) +
       theme_minimal()
   })
-  
+
   output$histogramPlot <- renderPlot({
     explanatory_var <- student_performance_factors[[input$explanatory]]
     is_categorical <- is.factor(explanatory_var) || is.character(explanatory_var)
+    selected_stat <- calculate_statistic(student_performance_factors$Exam_Score)
     
     if (is_categorical) {
       ggplot(student_performance_factors, aes(x = Exam_Score, fill = explanatory_var)) +
         geom_histogram(binwidth = 5, position = "dodge", alpha = 0.7) +
+        geom_vline(xintercept = selected_stat, color = "red", linetype = "dashed", size = 1) +
         labs(
           x = "Exam Score",
           y = "Count",
-          title = paste("Distribution of Exam Scores by", input$explanatory),
+          title = paste("Distribution of Exam Scores by", input$explanatory, "(", input$statistic, ": ", round(selected_stat, 2), ")"),
           fill = input$explanatory
         ) +
         theme_minimal()
     } else {
       ggplot(student_performance_factors, aes(x = Exam_Score)) +
         geom_histogram(aes(fill = ..count..), binwidth = 5, alpha = 0.7, color = "black") +
+        geom_vline(xintercept = selected_stat, color = "red", linetype = "dashed", size = 1) +
         labs(
           x = "Exam Score",
           y = "Count",
-          title = paste("Distribution of Exam Scores"),
+          title = paste("Distribution of Exam Scores (", input$statistic, ": ", round(selected_stat, 2), ")"),
           fill = "Count"
         ) +
         theme_minimal()
     }
-  }) 
+  })
 
   output$anovaResult <- renderPrint({
     if (is.factor(student_performance_factors[[input$explanatory]]) || 
