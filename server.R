@@ -57,7 +57,7 @@ output$plot <- renderPlot({
       labs(
         x = "Exam Score",
         color = input$explanatory,
-        title = paste0("Study Hours vs Exam Score (", input$statistic, ": ", round(selected_stat, 2), ")")
+        title = paste0(input$explanatory, " vs. Exam_Score (", input$statistic, ": ", round(selected_stat, 2), ")")
       ) +
       theme_minimal()
   })
