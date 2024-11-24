@@ -49,18 +49,41 @@ output$plot <- renderPlot({
             axis.text.y = element_blank())
   })
   
+  
   output$scatterPlot <- renderPlot({
     selected_stat <- calculate_statistic(student_performance_factors$Exam_Score)
-    ggplot(student_performance_factors, aes(x = Exam_Score, y = get(input$explanatory), color = get(input$explanatory))) +
-      geom_point(alpha = 0.7, size = 3) +
-      geom_vline(xintercept = selected_stat, color = "red", linetype = "dashed", size = 1) +
-      labs(
-        x = "Exam Score",
-        color = input$explanatory,
-        title = paste0(input$explanatory, " vs. Exam_Score (", input$statistic, ": ", round(selected_stat, 2), ")")
-      ) +
-      theme_minimal()
+    explanatory_stat <- student_performance_factors[[input$explanatory]]
+    r_squared <- NA
+    if(is.numeric(explanatory_stat)) {
+      lm_fit <- lm(explanatory_stat ~ Exam_Score, data=student_performance_factors)
+      r_squared = summary(lm_fit)$r.squared
+      ggplot(student_performance_factors, aes(x = Exam_Score, y = get(input$explanatory), color = get(input$explanatory))) +
+        geom_point(alpha = 0.7, size = 3) +
+        geom_vline(xintercept = selected_stat, color = "red", linetype = "dashed", size = 1) +
+        geom_smooth(method="lm",se=T,color="black")+
+        ylim(0,max(explanatory_stat))+
+        labs(
+          x = "Exam Score",
+          y= input$explanatory,
+          color = input$explanatory,
+          title = paste0(input$explanatory, " vs. Exam_Score (", input$statistic, ": ", round(selected_stat, 2), ")"),
+          subtitle=paste0("R squared: ", round(r_squared,3))
+        ) +
+        theme_minimal()
+    } else {
+      ggplot(student_performance_factors, aes(x = Exam_Score, y = get(input$explanatory), color = get(input$explanatory))) +
+        geom_point(alpha = 0.7, size = 3) +
+        geom_vline(xintercept = selected_stat, color = "red", linetype = "dashed", size = 1) +
+        labs(
+          x = "Exam Score",
+          color = input$explanatory,
+          title = paste0(input$explanatory, " vs. Exam_Score (", input$statistic, ": ", round(selected_stat, 2), ")"),
+          subtitle=paste0("R squared: ", round(r_squared,3))
+        ) +
+        theme_minimal()
+    }
   })
+  
 
   output$histogramPlot <- renderPlot({
     explanatory_var <- student_performance_factors[[input$explanatory]]
