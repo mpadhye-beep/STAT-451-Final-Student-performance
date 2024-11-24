@@ -158,12 +158,20 @@ ui <- fluidPage(
                      "The histogram shows the frequency distribution of the selected variable. Use it to identify the shape of the data, such as normality or skewness."),
                  plotOutput(outputId = "histogramPlot")),
         
-        tabPanel("ANOVA Results", 
+        tabPanel("Significance Results", 
                  br(),
                  div(class = "blurb", 
-                     "The ANOVA results tab compares means across groups. Use it to determine if there are statistically significant differences."),
-                 verbatimTextOutput(outputId = "anovaResult"),
-                 plotOutput(outputId = "anovaPlot")),
+                     "The significance results tab compares the significance of explanatory variables. 
+                     The ANOVA table examines means across groups to determine if there are statistically 
+                     significant differences. The linear regression table identifies whether a numerical 
+                     explanatory variable is significant, using a linear model. Both find significance at the
+                     alpha of 0.05."),
+                 tableOutput("anovaResult"),
+                 tableOutput("lmResult"),
+                 textOutput("significanceStatement")),
+                
+        
+                 
         
         tabPanel("Correlation Heatmap", 
                  br(),
