@@ -115,32 +115,102 @@ output$plot <- renderPlot({
     }
   })
 
-  output$anovaResult <- renderPrint({
+  output$anovaResult <- renderTable({
     if (is.factor(student_performance_factors[[input$explanatory]]) || 
         is.character(student_performance_factors[[input$explanatory]])) {
+      
       anova_result <- aov(Exam_Score ~ get(input$explanatory), data = student_performance_factors)
-      summary(anova_result)
+      anova_summary <- summary(anova_result)[[1]]  # Extract the ANOVA table
+      
+      result_table <- data.frame(
+        Source = c("Between Groups", "Within Groups"),
+        Df = anova_summary$Df,
+        Sum_Sq = anova_summary$`Sum Sq`,
+        Mean_Sq = anova_summary$`Mean Sq`,
+        F_value = anova_summary$`F value`,
+        Pr_F = anova_summary$`Pr(>F)`
+      )
+      
+      result_table$Pr_F <- format(result_table$Pr_F, digits = 3, scientific = T)
+      p_value <- anova_summary$`Pr(>F)`[1]  # Get the p-value for the first factor
+      significance <- ifelse(p_value < 0.05, "Significant", "Not Significant")
+      result_table$Significance_0.05 <- significance
+      
+      result_table
     } else {
       "ANOVA can only be performed on categorical variables."
     }
   })
   
-  output$anovaPlot <- renderPlot({
-    if (is.factor(student_performance_factors[[input$explanatory]]) || 
-        is.character(student_performance_factors[[input$explanatory]])) {
-      ggplot(student_performance_factors, aes(x = get(input$explanatory), y = Exam_Score)) +
-        geom_boxplot(fill = "skyblue", alpha = 0.7) +
-        labs(title = paste("Boxplot of Exam Scores by", input$explanatory),
-             x = input$explanatory, y = "Exam Score") +
-        theme_minimal()
-    } else {
-      ggplot() + theme_void()
-    }
-  })
 
   filtered_data <- reactive({
     student_performance_factors %>%
       select(where(is.numeric))
+  })
+  
+  output$lmResult <- renderTable({
+    explanatory_stat <- student_performance_factors[[input$explanatory]]
+    
+    if (is.numeric(explanatory_stat)) {
+      lm_fit <- lm(explanatory_stat ~ Exam_Score, data = student_performance_factors)
+      
+      lm_summary <- summary(lm_fit)
+      
+      result_table <- data.frame(
+        Component = c("Intercept", input$explanatory), 
+        Estimate = round(lm_summary$coefficients[, 1], 3),
+        Std_Error = round(lm_summary$coefficients[, 2], 3),
+        t_value = round(lm_summary$coefficients[, 3], 3),
+        p_value = lm_summary$coefficients[, 4]
+      )
+      
+      result_table$Significance_0.05 <- ifelse(result_table$p_value < 0.05, "Significant", "Not Significant")
+      result_table$p_value <- format(result_table$p_value, digits = 3, scientific = T)
+      
+      result_table <- rbind(result_table, data.frame(
+        Component = "R-squared", 
+        Estimate = lm_summary$r.squared,
+        Std_Error = NA, t_value = NA, p_value = NA, Significance_0.05 = NA
+      ))
+      
+      result_table
+    } else {
+      "Linear model can only be performed on numeric variables."
+    }
+  })
+  
+  output$significanceStatement <- renderText({
+    significance_message <- ""
+    
+    if (is.factor(student_performance_factors[[input$explanatory]]) || 
+        is.character(student_performance_factors[[input$explanatory]])) {
+      
+      anova_summary <- aov(Exam_Score ~ get(input$explanatory), data = student_performance_factors)
+      p_value_anova <- summary(anova_summary)[[1]]$`Pr(>F)`[1]
+      
+      if (p_value_anova < 0.05) {
+        significance_message <- paste(significance_message, "ANOVA result: Explanatory variable is significant (p < 0.05)", sep = "\n")
+      } else {
+        significance_message <- paste(significance_message, "ANOVA result: Explanatory variable is not significant (p >= 0.05)", sep = "\n")
+      }
+    }
+    
+    explanatory_stat <- student_performance_factors[[input$explanatory]]
+    
+    if (is.numeric(explanatory_stat)) {
+      lm_fit <- lm(explanatory_stat ~ Exam_Score, data = student_performance_factors)
+      lm_summary <- summary(lm_fit)
+      
+      p_value_lm <- lm_summary$coefficients[2, 4]  
+      
+      if (p_value_lm < 0.05) {
+        significance_message <- paste(significance_message, "Linear model result: Explanatory variable is Significant (p < 0.05)", sep = "\n")
+      } else {
+        significance_message <- paste(significance_message, "Linear model result: Explanatory variable is Not Significant (p >= 0.05)", sep = "\n")
+      }
+    }
+    
+    return(significance_message)
   })
   
   output$correlationHeatmap <- renderPlot({
