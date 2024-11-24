@@ -173,11 +173,11 @@ ui <- fluidPage(
         
                  
         
-        tabPanel("Correlation Heatmap", 
-                 br(),
-                 div(class = "blurb", 
-                     "The correlation heatmap visualizes the strength and direction of relationships between variables. Darker colors indicate stronger correlations."),
-                 plotOutput(outputId = "correlationHeatmap"))
+        #tabPanel("Correlation Heatmap", 
+                 #br(),
+                 #div(class = "blurb", 
+                     #"The correlation heatmap visualizes the strength and direction of relationships between variables. Darker colors indicate stronger correlations."),
+                 #plotOutput(outputId = "correlationHeatmap"))
       )
     )
     #
