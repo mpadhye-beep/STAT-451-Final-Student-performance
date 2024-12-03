@@ -72,7 +72,7 @@ ui <- fluidPage(
     sidebarPanel(
       class = "sidebar",
       # Add an image to the sidebar
-      img(src = "https://via.placeholder.com/300x200.png?text=Student+Performance", alt = "Student Performance"),
+      #img(src = "https://via.placeholder.com/300x200.png?text=Student+Performance", alt = "Student Performance"),
       
       h4("Why This App Matters"),
       p("This app helps analyze the relationship between key factors and student performance, enabling educators and students to identify trends and improve outcomes. 
@@ -173,11 +173,11 @@ ui <- fluidPage(
         
                  
         
-        #tabPanel("Correlation Heatmap", 
-                 #br(),
-                 #div(class = "blurb", 
-                     #"The correlation heatmap visualizes the strength and direction of relationships between variables. Darker colors indicate stronger correlations."),
-                 #plotOutput(outputId = "correlationHeatmap"))
+        tabPanel("Correlation Heatmap", 
+                 br(),
+                 div(class = "blurb", 
+                     "The correlation heatmap visualizes the strength and direction of relationships between variables. Darker colors indicate stronger correlations."),
+                 plotOutput(outputId = "correlationHeatmap"))
       )
     )
     #
